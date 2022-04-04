@@ -1,6 +1,12 @@
 import {HookState} from './types';
+import {identity, pipeline} from './utils';
 
-export function createHookState<T>(initialValue: T): HookState<T> {
+type Middleware<T> = (value: T) => T;
+
+export function createHookState<T>(
+	initialValue: T,
+	middlewares: Array<Middleware<T>> = [],
+): HookState<T> {
 	const SUBSCRIBERS: Array<(state: T) => void> = [];
 	let STATE: T = initialValue;
 
@@ -9,7 +15,7 @@ export function createHookState<T>(initialValue: T): HookState<T> {
 	}
 
 	function set(value: T | ((state: T) => T)) {
-		STATE = value instanceof Function ? value(STATE) : value;
+		STATE = pipeline([identity, ...middlewares])(value instanceof Function ? value(STATE) : value);
 
 		for (const subscriber of SUBSCRIBERS) {
 			subscriber(STATE);
