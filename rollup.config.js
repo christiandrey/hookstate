@@ -33,7 +33,7 @@ if (isProduction) {
 }
 
 export default {
-	input: 'src/index.ts',
+	input: 'lib/index.ts',
 	output: [
 		{
 			file: packageJson.main,
