@@ -25,6 +25,8 @@ export function createHookState<T>(
 	function subscribe(callback: (state: T) => void) {
 		SUBSCRIBERS.push(callback);
 
+		callback(get());
+
 		return () => {
 			unsubscribe(callback);
 		};
